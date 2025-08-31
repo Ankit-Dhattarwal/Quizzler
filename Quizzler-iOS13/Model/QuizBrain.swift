@@ -1,19 +1,15 @@
 //
-//  ViewController.swift
+//  QuizBrain.swift
 //  Quizzler-iOS13
 //
-//  Created by Angela Yu on 12/07/2019.
-//  Copyright © 2019 The App Brewery. All rights reserved./Users/ankit/Documents/IOS/IOS/Quizzler-iOS13/Quizzler-iOS13/ViewController.swift
+//  Created by Ankit on 24/08/25.
+//  Copyright © 2025 The App Brewery. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
-class ViewController: UIViewController {
-    
-    @IBOutlet weak var progressBar: UIProgressView!
-    @IBOutlet weak var trueButton: UIButton!
-    @IBOutlet weak var questionLabel: UILabel!
-    @IBOutlet weak var falseButton: UIButton!
+
+struct QuizBrain{
     
     let quiz = [
         Question(q: "HTML stands for HyperText Markup Language.", a: "True"),
@@ -28,46 +24,43 @@ class ViewController: UIViewController {
         Question(q: "A compiler translates source code directly into machine code without producing an intermediate code.", a: "False"),
         Question(q: "Open-source software is always free of cost.", a: "False"),
         Question(q: "A stack follows the Last In, First Out (LIFO) principle.", a: "True")
-
+        
     ]
     
     var questionNumber = 0
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        updateUI()
-        // Do any additional setup after loading the view.
-    }
-
-
-
-    @IBAction func answerButtonPressed(_ sender: UIButton) {
-        let userAnswer = sender.currentTitle
-        let actualQuestion = quiz[questionNumber]
-        let actualAnswer = actualQuestion.answer
-        
-        if(userAnswer == actualAnswer){
-            sender.backgroundColor = UIColor.green
+    var scoreValue = 0
+    
+    mutating func checkAnswer(_ userAnswer: String) -> Bool{
+        if( userAnswer == quiz[questionNumber].answer){
+            scoreValue += 1
+            return true
         }else{
-            sender.backgroundColor = UIColor.red
+            return false
         }
-        
+    }
+    
+    func getQuestionText() -> String {
+        return quiz[questionNumber].text
+    }
+    
+    func getProgressBr() -> Float {
+        return Float(questionNumber + 1) / Float(quiz.count)
+    }
+    
+    // Here we need to add the mutation bcz we try to modify inside the struct [ and when use try to modify any value inside struct then it call like self.NameOfVaribale ]
+    
+    mutating func nextQuestion() {
         if(questionNumber + 1 < quiz.count){
             questionNumber += 1
         }else{
             questionNumber = 0
+            scoreValue = 0
         }
-        
-        Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { timer in
-            self.updateUI()
-        }
-
     }
     
-    func updateUI(){
-        questionLabel.text = quiz[questionNumber].text
-        trueButton.backgroundColor = UIColor.clear
-        falseButton.backgroundColor = UIColor.clear
-        progressBar.progress = Float(questionNumber + 1) / Float(quiz.count)
-    }
-}
+    func getScore() -> Int{
 
+        return scoreValue
+    }
+    
+}
